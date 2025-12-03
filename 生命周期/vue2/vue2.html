@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue2生命周期</title>
+  <script src="../../lib/vue.js"></script>
+</head>
+
+<body>
+  <div id="app" v-if="showApp">
+    <div ref="msg">{{msg}}</div>
+    <children :title="msg" @update-title="updateTitle" v-if="show"></children>
+    <button @click="showMsg">显示</button>
+    <button @click="hidden">隐藏</button>
+    <button @click="hiddenApp">隐藏App</button>
+  </div>
+
+  <script>
+    const children = Vue.component("children", {
+      template:
+        `<div>
+          <div>子组件-{{title}}</div>
+          <div>count: {{count}}</div>
+          <button @click="updateTitle">修改title</button>
+          <button @click="add">+1</button>
+        </div>`,
+
+      props: {
+        title: {
+          type: String,
+          default: ""
+        }
+      }, 
+      data() {
+        return {
+          count: 0
+        }
+      },
+
+      methods: {
+        add() {
+          this.count++
+        },
+
+        updateTitle() {
+          this.$emit("update-title", `hello world${Math.random()}`)
+          console.log(123)
+        }
+      },
+
+      beforeUpdate() {
+        console.log("🚀 ~ vue2.html ~ beforeUpdate ~ beforeUpdate:", '子组件更新前')
+      },
+
+      updated() {
+        console.log("🚀 ~ vue2.html ~ updated ~ updated:", '子组件更新完成')
+      },
+
+      beforeDestroy() {
+        console.log("🚀 ~ vue2.html ~ beforeDestroy:", '子组件销毁前')
+      },
+
+      destroyed() {
+        console.log("🚀 ~ vue2.html ~ destroyed:", '子组件销毁完成')
+      }
+    })
+    const vm = new Vue({
+      el: "#app",
+      data() {
+        return {
+          msg: "hello world",
+          show: true,
+          showApp: true,
+        }
+      },
+
+      components: {
+        children
+      },
+
+      methods: {
+        showMsg() {
+          window.alert(this.msg)
+        },
+
+        updateTitle(msg) {
+          console.log("🚀 ~ vue2.html ~ updateTitle ~ msg:", msg)
+          this.msg = msg
+        },
+
+        hidden() {
+          this.show = false
+        },
+
+        hiddenApp() {
+          this.showApp = false
+        }
+      },
+
+      beforeCreate() {
+        console.log("🚀 ~ vue2.html ~ beforeCreate ~ beforeCreate:", '组件实例创建前，无法获取到data中的数据，methods中的方法，$el属性...')
+        // this.msg， this.showMsg, this.$refs.mg 访问都会报错
+      },
+
+      created() {
+        console.log("🚀 ~ vue2.html ~ created ~ created:", '组件创建完成，可以访问data，methods等属性，但是因为还没挂载，所以无法访问dom')
+        console.log(this.msg)
+        // 访问this.$refs.msg是undefined
+      },
+
+      beforeMount() {
+        console.log("🚀 ~ vue2.html ~ beforeMount ~ beforeMount:", '组件挂载前，此时可以访问到data，methods等属性，但是因为还没挂载，所以无法访问dom')
+      },
+
+      mounted() {
+        console.log("🚀 ~ vue2.html ~ mounted ~ mounted:", '组件挂载完成，可以访问dom了')
+        console.log(this.$refs.msg)
+      },
+
+      beforeUpdate() {
+        console.log("🚀 ~ vue2.html ~ beforeUpdate ~ beforeUpdate:", '组件更新前')
+      },
+
+      updated() {
+        console.log("🚀 ~ vue2.html ~ updated ~ updated:", '组件更新完成')
+      },
+
+      beforeDestroy() {
+        console.log("🚀 ~ vue2.html ~ beforeDestroy:", '组件销毁前')
+      },
+
+      destroyed() {
+        console.log("🚀 ~ vue2.html ~ destroyed:", '组件销毁完成')
+      }
+    })
+  </script>
+</body>
+
+</html>

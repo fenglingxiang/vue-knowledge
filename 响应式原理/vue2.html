@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue2响应式缺点</title>
+  <script src="../lib/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div v-for="item in list" :key="item.value">{{item.value}}</div>
+    <div>obj.value: {{obj.value}}</div>
+    <div>obj.obj1.label: {{obj.obj1.label || ""}}</div>
+    <button @click="updateList">更新list</button>
+    <button @click="updateObj">更新obj1</button>
+    <button @click="updateListLength">更新list长度</button>
+  </div>
+  <script>
+    const app = new Vue({
+      el: "#app",
+      data: {
+        obj: {
+          value: "old obj",
+          obj1: {
+            value: "old obj1",
+          }
+        },
+        list: [{
+          value: 1
+        }, {
+          value: 2
+        }]
+      },
+
+      mounted() {
+        this.newObj = {
+          value: "new obj"
+        }
+        console.log(this.newObj) //未初始化的属性没有get，set方法，非响应式数据
+        console.log(this.obj) //未初始化的属性没有get，set方法，非响应式数据
+      },
+
+      methods: {
+        updateList() {
+          this.list[0] = {
+            value: 100
+          }
+          console.log(this.list) //非响应式更新, 无法通过索引直接更新 vue2响应式缺点
+        },
+
+        updateObj() {
+          this.obj.obj1.label = "obj obj1 label" //嵌套太深层，无法响应 vue2响应式缺点
+          console.log(this.obj.obj1)
+        },
+
+        updateListLength() {
+          this.list.length = 0 //无法直接修改数组长度，需要借助数组方法实现 vue2响应式缺点
+          console.log(this.list, this.list.length)
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

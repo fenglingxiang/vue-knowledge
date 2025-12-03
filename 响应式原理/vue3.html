@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue3响应式</title>
+
+  <script src="../lib/vue.global.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div v-for="item in list" :key="item.value">{{item.value}}</div>
+    <div>obj.value: {{obj.value}}</div>
+    <div>obj.obj1.label: {{obj.obj1.label || ""}}</div>
+    <button @click="updateList">更新list</button>
+    <button @click="updateObj">更新obj1</button>
+    <button @click="updateListLength">更新list长度</button>
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted } = Vue
+    const app = createApp({
+      setup() {
+        const obj = ref({
+          value: "old obj",
+          obj1: {
+            value: "old obj1",
+          }
+        })
+        const list = ref([{
+          value: 1
+        }, {
+          value: 2
+        }])
+
+        const updateList = () => {
+          list.value[0] = {
+            value: 100
+          }
+          console.log(list.value)
+        }
+
+        const updateObj = () => {
+          obj.value.obj1.label = "obj obj1 label"
+          console.log(obj.value.obj1)
+        }
+
+        const updateListLength = () => {
+          list.value.length = 0 //无法直接修改数组长度，需要借助数组方法实现 vue2响应式缺点
+          console.log(list.value)
+        }
+
+        onMounted(() => {
+          console.log(obj) //响应式数据
+        })
+
+        return {
+          obj,
+          list,
+          updateList,
+          updateObj,
+          updateListLength
+        }
+      }
+    }).mount("#app")
+  </script>
+</body>
+
+</html>

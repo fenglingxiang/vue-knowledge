@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue3生命周期</title>
+  <script src="../../lib/vue.global.js"></script>
+</head>
+
+<body>
+  <div id="app" v-if="showApp">
+    <div ref="msgRef">{{msg}}</div>
+    <children :title="msg" @update-title="updateTitle" v-if="show"></children>
+    <button @click="showMsg">显示</button>
+    <button @click="hidden">隐藏</button>
+    <button @click="hiddenApp">隐藏App</button>
+  </div>
+
+  <script>
+    const { createApp, ref, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted } = Vue
+
+    const children = {
+      template: `<div>
+          <div>子组件-{{title}}</div>
+          <div>count: {{count}}</div>
+          <button @click="updateTitle">修改title</button>
+          <button @click="add">+1</button>
+        </div>`,
+      props: {
+        title: {
+          type: String,
+          default: ""
+        }
+      },
+      setup(props, context) {
+        const count = ref(0)
+
+        const add = () => {
+          count.value++
+        }
+
+        const updateTitle = (str) => {
+          context.emit("update-title", `hello world${Math.random()}`)
+        }
+
+        console.log("🚀 ~ vue2.html ~ setup:", '子组件初始化')
+
+        onBeforeMount(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeMount:", '子组件挂载前')
+        })
+
+        onMounted(() => {
+          console.log("🚀 ~ vue2.html ~ onMounted:", '子组件挂载完成')
+        })
+
+        onBeforeUpdate(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeUpdate:", '子组件更新前')
+        })
+
+        onUpdated(() => {
+          console.log("🚀 ~ vue2.html ~ onUpdated:", '子组件更新完成')
+        })
+
+        onBeforeUnmount(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeUnmount:", '子组件销毁前')
+        })
+
+        onUnmounted(() => {
+          console.log("🚀 ~ vue2.html ~ onUnmounted:", '子组件销毁完成')
+        })
+
+        return {
+          count,
+          add,
+          updateTitle
+        }
+      }
+    }
+
+    createApp({
+      components: {
+        children
+      },
+      setup() {
+        const msg = ref("hello world")
+        const show = ref(true)
+        const showApp = ref(true)
+        const msgRef = ref()
+
+        const showMsg = () => {
+          window.alert(msg.value)
+        }
+
+        const updateTitle = (str) => {
+          msg.value = str
+        }
+
+        const hidden = () => {
+          show.value = false
+        }
+
+        const hiddenApp = () => {
+          showApp.value = false
+          console.log(showApp.value)
+        }
+
+        console.log("🚀 ~ vue2.html ~ setup:", '组件初始化')
+
+        onBeforeMount(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeMount:", '组件挂载前', msg.value)
+        })
+
+        onMounted(() => {
+          console.log("🚀 ~ vue2.html ~ onMounted:", '组件挂载完成')
+        })
+
+        onBeforeUpdate(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeUpdate:", '组件更新前')
+        })
+
+        onUpdated(() => {
+          console.log("🚀 ~ vue2.html ~ onUpdated:", '组件更新完成')
+        })
+
+        onBeforeUnmount(() => {
+          console.log("🚀 ~ vue2.html ~ onBeforeUnmount:", '组件销毁前')
+        })
+
+        onUnmounted(() => {
+          console.log("🚀 ~ vue2.html ~ onUnmounted:", '组件销毁完成')
+        })
+
+        return {
+          msg,
+          show,
+          showApp,
+          showMsg,
+          updateTitle,
+          hidden,
+          hiddenApp
+        }
+      }
+    }).mount("#app")
+  </script>
+</body>
+
+</html>
