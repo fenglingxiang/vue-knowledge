@@ -37,3 +37,13 @@ a = a, b = b
 
 结束比较
 ```
+
+### 总结
+
+vue 的虚拟 dom 是一个用来描述真实 dom 的 js 对象结构。是通过 vnode 类创建的，当数据变化时，vue 不会直接操作真实 dom，而是生成新的虚拟 don 树，然后通过 diff 算法对比新旧虚拟 dom 树，找出差异，然后根据差异最小化操作真实 dom，从而实现最小化更新。
+
+diff 过程在 vue2 中采用的是双端比较算法，通过头头比较、尾尾比较、旧头新尾比较、旧尾新头比较，找出差异，然后通过 key 映射表，找出新节点在旧节点中的位置，然后移动节点。vue3 则是在侧基础上增加了最长递增子序列算法，在序列中的节点说明无需移动，从而减少了 dom 移动次数。
+
+### vue 是如何实现 MVVM 的
+
+vue 是通过数据劫持 + 发布订阅模式 + 虚拟 dom 实现 mvvm 的。Model 指的是数据层，View 指的是视图层，ViewModel 指的是 vue 的实例用于连接数据层和视图层，实现自动同步。vue2 中通过 Object.defineProperty()实现数据劫持，访问数据时触发 getter，收集依赖，数据变化时触发 setter，通知所有依赖更新。vue3 则使用了 Proxy 代理替换了 Object.defineProperty，为了解决 vue2 中的一些局限性，比如无法监听新增/删除属性，无法通过索引或 length 监听数组变化等。Proxy 代理拥有更多的拦截操作，除了 get，set 以外，还有 deleteProperty，has，onwKeys 等等，功能更加强大。
