@@ -47,3 +47,10 @@ diff 过程在 vue2 中采用的是双端比较算法，通过头头比较、尾
 ### vue 是如何实现 MVVM 的
 
 vue 是通过数据劫持 + 发布订阅模式 + 虚拟 dom 实现 mvvm 的。Model 指的是数据层，View 指的是视图层，ViewModel 指的是 vue 的实例用于连接数据层和视图层，实现自动同步。vue2 中通过 Object.defineProperty()实现数据劫持，访问数据时触发 getter，收集依赖，数据变化时触发 setter，通知所有依赖更新。vue3 则使用了 Proxy 代理替换了 Object.defineProperty，为了解决 vue2 中的一些局限性，比如无法监听新增/删除属性，无法通过索引或 length 监听数组变化等。Proxy 代理拥有更多的拦截操作，除了 get，set 以外，还有 deleteProperty，has，onwKeys 等等，功能更加强大。
+
+### 什么时候 diff 算法效率会降低
+
+1. 没有使用 key 或是 key 值不唯一时
+2. 组件层级过深并且频繁更新
+3. 大量动态节点并且结构频繁变化
+4. 频繁强制重新渲染整个组件
